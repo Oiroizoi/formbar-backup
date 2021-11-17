@@ -1,4 +1,3 @@
-
 REM install packages
 REM apt update
 REM apt upgrade -y
@@ -23,3 +22,4 @@ copy key_template.py key.py
 copy config_template.py config.py
 cd data
 copy database_template.db database.db
+pause
