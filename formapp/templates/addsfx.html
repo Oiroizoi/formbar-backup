@@ -17,4 +17,10 @@
 {% endblock %}
 
 <!-- Extra JavaScript here -->
-{% block script %}{% endblock %}
+{% block script %}
+<form method="post">
+  <input type="text" name="Song Name" placeholder="Song Name">
+  <input type="file">
+  <input type="submit" class="small" onclick="location.reload();">
+</form>
+{% endblock %}
