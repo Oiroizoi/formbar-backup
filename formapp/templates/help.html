@@ -3,10 +3,13 @@
 <!-- This is where the title, top buttons, and stylesheet is located -->
 
 <!-- Change title here -->
-{% block title %}Formbar Help{% endblock %}
+{% block title %}Help{% endblock %}
 
 <!-- Extra style declarations here -->
 {% block style %}{% endblock %}
+
+<!-- Change theme color here -->
+{% block color %}yellow{% endblock %}
 
 <!-- Extra javascript here -->
 {% block script %}{% endblock %}
@@ -17,5 +20,4 @@
 <form action="help" method="post" style="text-align: center;">
     <input type="submit" value="Click to Send a Help Ticket">
 </form>
-
 {% endblock %}

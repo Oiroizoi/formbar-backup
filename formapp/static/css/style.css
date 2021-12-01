@@ -15,11 +15,11 @@
 
   --light-red: #ff6860;
   --light-brown: #bf6040;
-  --light-orange: #ff8f60;
-  --light-yellow: #ffdf80;
+  --light-orange: #ff8f40;
+  --light-yellow: #ffdf40;
   --light-green: #80ff80;
   --light-cyan: #80ffff;
-  --light-blue: #8f9bbf;
+  --light-blue: #bfcfff;
   --light-purple: #df80ff;
   --light-pink: #ff80bfff;
   --light-gray: #ccc;
@@ -54,6 +54,18 @@
 
 .red {
   --theme-color: var(--light-red);
+}
+
+.brown {
+  --theme-color: var(--light-brown);
+}
+
+.orange {
+  --theme-color: var(--light-orange);
+}
+
+.yellow {
+  --theme-color: var(--light-yellow);
 }
 
 .green {
@@ -111,6 +123,12 @@ body, .light, .dark {
   cursor: not-allowed;
 }
 
+.pressed {
+  background: var(--theme-color);
+  color: var(--bg-dark);
+  cursor: default;
+}
+
 ::selection {
   background: var(--theme-color);
   color: var(--bg-color);
@@ -159,30 +177,32 @@ input, button, textarea, select {
   outline: none;
 }
 
-.box {
+textarea, .box {
   background: var(--emphasis-color);
   color: var(--main-color);
   border: 1px solid;
 }
 
-.box:focus {
-  outline: 1px solid;
+textarea:focus, .box:focus {
+  border: 1px solid var(--theme-color);
+  outline: 1px solid var(--theme-color);
 }
 
 /*Use class "button" for button-like inputs, such as submit and file*/
 
 button:not(.inline), .button:not(.inline) {
   padding: 3px 9px;
-  border-radius: 16px;
+  border-radius: 9999px;
   background: var(--emphasis-color);
   color: var(--theme-color);
   border: 1px solid;
   font-size: 18px;
   cursor: pointer;
+  user-select: none;
 }
 
-button:not(.popOut):not(.unselectable):not(.on):hover,
-.button:not(.popOut):not(.unselectable):not(.on):hover {
+button:not(.popOut):not(.unselectable):not(.pressed):hover,
+.button:not(.popOut):not(.unselectable):not(.pressed):hover {
   background: var(--highlight-color);
 }
 
@@ -195,6 +215,7 @@ button.inline, .button.inline {
   color: var(--theme-color);
   font-weight: bold;
   cursor: pointer;
+  user-select: none;
 }
 
 .popOut {
@@ -260,6 +281,10 @@ input[type="radio"]:checked:hover {
   box-shadow: 0 0 0 2px var(--emphasis-color) inset, 0 0 4px;
 }
 
+textarea {
+  resize: none;
+}
+
 select {
   background: var(--emphasis-color);
   border: 1px var(--theme-color) solid;
@@ -271,4 +296,9 @@ select:focus {
 
 a {
   color: var(--theme-color);
+}
+
+table, th, td {
+  border: 1px solid;
+  border-collapse: collapse;
 }

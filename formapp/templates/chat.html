@@ -60,7 +60,7 @@
   }
 
   .them .username {
-    color: var(--ice-blue);
+    color: var(--theme-color);
     cursor: pointer;
   }
 
@@ -73,13 +73,13 @@
   }
 
   .date {
-    color: var(--light-blue);
+    color: var(--light-gray);
     margin-right: 5px;
   }
 
   .alert .content {
     font-style: italic;
-    color: var(--ice-blue);
+    color: var(--theme-color);
   }
 
   #userlist {
@@ -109,13 +109,13 @@
   }
 
   .ulName.them:hover {
-    background-color: var(--ice-blue);
+    background-color: var(--theme-color);
     color: var(--bg-dark);
   }
 
   #controlChat {
     background-color: var(--bg-dark);
-    border-top: 1px solid var(--ice-blue);
+    border-top: 1px solid var(--theme-color);
     position: fixed;
     width: 100%;
     bottom: 0;
@@ -138,45 +138,21 @@
     width: 75%;
     height: 32px;
     box-sizing: border-box;
-    background-color: var(--bg-darker);
-    color: white;
-    border: 1px solid var(--ice-blue);
-    font-family: "Segoe UI", sans-serif;
-    font-size: 16px;
+    border: 1px solid var(--theme-color);
   }
 
   #input:focus {
-    outline: 1px solid var(--ice-blue);
-  }
-
-  #input::-webkit-scrollbar-thumb {
-    box-shadow: inset 0 0 5px 5px var(--ice-blue);
-    border: solid 5px transparent;
-  }
-
-  #input::-webkit-scrollbar-thumb:hover {
-    box-shadow: inset 0 0 5px 5px white;
-  }
-
-  #input::-webkit-scrollbar-thumb:active {
-    box-shadow: inset 0 0 15px 15px white;
-    border: none;
-  }
-
-  #sendButton, button {
-    box-sizing: border-box;
-    background-color: var(--bg-dark);
-    color: var(--ice-blue);
-    border: 1px solid var(--ice-blue);
-    cursor: pointer;
+    outline: 1px solid var(--theme-color);
+    border-color: var(--theme-color);
   }
 
   #sendButton {
     width: 64px;
     height: 32px;
+    box-sizing: border-box;
     border-radius: 8px;
     margin: 0 0 0 5px;
-    font: 20px "Segoe UI", sans-serif;
+    font-size: 20px;
     vertical-align: top;
     transition-duration: 0.2s;
   }
@@ -185,18 +161,6 @@
     margin-top: 5px;
     border-radius: 5.5px;
     font: 14px "Segoe UI", sans-serif;
-  }
-
-  #sendButton:hover, #sendButton:focus, button:hover, button:focus {
-    background-color: var(--ice-blue);
-    color: var(--bg-dark);
-    outline: none;
-  }
-
-  #sendButton:active, button:active {
-    background-color: white;
-    border-color: white;
-    color: var(--bg-dark);
   }
 
   #sendButton:active {
@@ -210,17 +174,17 @@
 
   #sendButton.rec:hover, #sendButton.rec:focus {
     background-color: var(--light-purple);
-    color: var(--bg-dark);
+    color: var(--bg-color);
   }
 
   #sendButton.rec:active {
     background-color: white;
     border-color: white;
-    color: var(--bg-dark);
+    color: var(--bg-color);
   }
 
   a {
-    color: var(--ice-blue);
+    color: var(--theme-color);
   }
 
   a:visited {
@@ -233,13 +197,12 @@
 
   h1 {
     margin: 0;
-    color: var(--ice-blue);
+    color: var(--theme-color);
     font-size: 24px;
   }
 
   h2 {
     margin: 0;
-    color: var(--ice-blue);
     font-size: 20px;
   }
 
@@ -252,7 +215,7 @@
     background-color: initial;
   }
 
-  .game #userlist, .game #recContainer, .game #commands {
+  .game #userlist, .game #recContainer {
     display: none;
   }
 
@@ -279,9 +242,8 @@
 </style>
 {% endblock %}
 
-<!-- Extra javascript here -->
-{% block script %}
-{% endblock %}
+<!-- Change theme color here -->
+{% block color %}blue{% endblock %}
 
 <!-- Main content here -->
 {% block main %}
@@ -294,16 +256,40 @@
 <div id="controlChat">
     <div id="recContainer" style="font-size: 14px; margin-bottom: 5px;">To <span id="recipient">all</span><span id="removeRec" onclick="removeRec()" title="Reset recipients to all">✕</span></div>
     <form onsubmit="event.preventDefault(); onSubmit(); return false;" style="margin: 0;">
-        <input id="input" placeholder="Enter a message" autocomplete="off">
-        <input type="submit" value="Send" id="sendButton">
+        <input id="input" class="box" placeholder="Enter a message" autocomplete="off">
+        <input type="submit" value="Send" id="sendButton" class="button">
     </form>
-    <div id="commands" style="font-size: 14px; margin-top: 5px;">Commands: <button onclick="enterCommand('!#help')">!#help</button></div>
 </div>
+{% endblock %}
+
+<!-- Extra javascript here -->
+{% block script %}
 <script type="text/javascript">
     // Connect to Web Socket
     ws = new WebSocket("ws://{{ serverIp }}:9001");
     var username = "{{ username }}";
     var receiver = 'all';
+
+    //Get user's permissions from server
+    request.open("GET", '/getme', false);
+    request.send(null);
+    let meRes = JSON.parse(request.responseText);
+    let myPerms = meRes.perms;
+
+    //Get chat permissions from the server
+    request.open("GET", '/getpermissions', false);
+    request.send(null);
+    let permsRes = JSON.parse(request.responseText);
+    let sayPerms = permsRes.say;
+
+    //If user doesn't have chat permissions, remove input section
+    if (myPerms > sayPerms) {
+      let cc = document.getElementById("controlChat");
+      cc.innerText = "You don't have high enough permissions to send chat messages.";
+      cc.style.textAlign = "center";
+      cc.style.lineHeight = "90px";
+      cc.style.fontSize = "32px";
+    }
 
     //When the connection opens.
     ws.onopen = function() {};
@@ -379,7 +365,7 @@
         receiver = 'all';
         boxes.recBox.innerHTML = "all";
         boxes.recBox.style.color = "white";
-        boxes.sendButton.style.color = "var(--ice-blue)";
+        boxes.sendButton.style.color = "var(--theme-color)";
         //sendButton.value = "Send";
         //el.classList.remove('whisper');
         document.getElementById("removeRec").style.display = "none";
@@ -457,7 +443,7 @@
         //Use this if you want to allow HTML
         newMSG.innerHTML = `
           <b class="username" onclick="${usernameOnclick}" title="${usernameTitle}">${message.from}</b>
-          <span style="color: var(--light-blue);">${getDate()} ${message.to != "all" ? "· Private message" : ""}</span>
+          <span style="color: var(--theme-color);">${getDate()} ${message.to != "all" ? "· Private message" : ""}</span>
           <div class="content">${message.content}</div>
         `;
         //Use this if you want to convert HTML into text
@@ -471,7 +457,6 @@
       boxes.inputBox.focus();
     }
 
-    let urlParams = new URLSearchParams(window.location.search);
     let gamePlayer = urlParams.get("game");
     if (gamePlayer) {
       document.documentElement.classList.add("game");

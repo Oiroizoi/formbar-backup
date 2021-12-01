@@ -20,5 +20,16 @@
     </script>
   </body>
 
+  <script>
+    let request = new XMLHttpRequest();
+    request.open("GET", '/getip', false);
+    request.send(null);
+    let serverIp = request.responseText;
+    //let ws = new WebSocket(`ws://${serverIp}:9001`);
+    let urlParams = new URLSearchParams(window.location.search);
+
+    //If URL param "message" is present, display as alert
+    if (urlParams.get("message")) alert(urlParams.get("message"));
+  </script>
   {% block script %}{% endblock %}
 </html>
